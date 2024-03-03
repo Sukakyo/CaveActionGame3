@@ -5,6 +5,9 @@
 #define SCREEN_HEIGHT (480)
 
 
+#include <pugixml.hpp>
+#include <iostream>
+
 
 
 int CAT_SDLEngine::InitEngine()
@@ -149,7 +152,23 @@ int CAT_SDLEngine::Update()
 
     SDL_RenderClear(m_renderer);
 
-    gb1->input(Vector3d(input.right - input.left, -(input.front - input.back), 0).normalized());
+    int vertical = -(input.front - input.back);
+    int horizontal = input.right - input.left;
+
+    if (vertical == 1) {
+        gb1->change_anim(0);
+    }
+    else if (vertical == -1) {
+        gb1->change_anim(3);
+    }
+    else if (horizontal == 1) {
+        gb1->change_anim(2);
+    }
+    else if (horizontal == -1) {
+        gb1->change_anim(1);
+    }
+
+    gb1->input(Vector3d(horizontal, vertical, 0).normalized());
     
     gb1->get_box_collider_2d()->update();
     gb2->get_box_collider_2d()->update();
@@ -205,10 +224,6 @@ int CAT_SDLEngine::Finish(){
 	SDL_DestroyRenderer(m_renderer);
 	SDL_DestroyWindow(m_window);
 	SDL_Quit();
-
-
-    
-    
 
 
     return 0;

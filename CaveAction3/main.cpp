@@ -6,6 +6,8 @@
 
 #pragma comment(lib, "cryptlib.lib")
 
+#pragma comment(lib, "pugixml.lib")
+
 
 
 int main(int args, char* argv[]){

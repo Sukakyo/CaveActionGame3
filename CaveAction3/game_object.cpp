@@ -7,6 +7,9 @@
 #include "debug_log.h"
 #include "raw_image.h"
 
+#include "PlayerAnim1.h"
+
+
 #define MASS (2.0)
 
 using namespace std;
@@ -48,6 +51,11 @@ void GameObject::project(){
 	this->image->project();
 }
 
+void GameObject::change_anim(unsigned short new_id) {
+	this->image->change_animation(new_id);
+}
+
+
 void GameObject::addForce(const Vector3d force){
 	this->rigidbody->addForce(force);
 }
@@ -85,17 +93,7 @@ GameObject::GameObject(const string init_name,const Vector3d init_position, SDL_
 	this->transform.set_position(init_position);
 
 	this->image = new component::CAT_AnimationImage(&(this->transform), 
-	std::vector<const char*>{
-	"./resource/imgs/run/front/dotchara1_ver3_front_run1.png",
-	"./resource/imgs/run/front/dotchara1_ver3_front_run2.png",
-	"./resource/imgs/run/front/dotchara1_ver3_front_run3.png",
-	"./resource/imgs/run/front/dotchara1_ver3_front_run4.png"},
-	std::vector<double>{
-		200,
-		200,
-		200,
-		200
-	},
+	player_anim_1(),
 	renderer);
 
 	projecter_ptr->save(this->image, 2);
