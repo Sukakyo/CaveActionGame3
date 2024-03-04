@@ -13,7 +13,7 @@ void CAT_ImageStorage::save_image(const char* file_name){
     if(this->m_image_map[s_file_name] == nullptr){
         this->m_image_map[s_file_name] = IMG_Load(file_name);
     }else{
-        debug::debugLog("Already Save!");
+        debug::debugLog("Already Save!\n");
     }
 }
 

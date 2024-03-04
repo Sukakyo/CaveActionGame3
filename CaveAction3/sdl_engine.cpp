@@ -13,7 +13,7 @@
 int CAT_SDLEngine::InitEngine()
 {
 
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0)
     {
         debug::debugLog("Error: Failed to initialize SDL!\n");
         return -1;
@@ -49,6 +49,17 @@ int CAT_SDLEngine::InitEngine()
 
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 
+
+
+    for (auto i = 0, joystick_count = SDL_NumJoysticks(); i < joystick_count; i++)
+    {
+        if (!SDL_IsGameController(i)) continue;
+
+        this->AddController(i);
+    }
+
+
+
     CAT_ImageStorage::create();
 
     m_projecter = new ImageProjecter();
@@ -78,7 +89,6 @@ int CAT_SDLEngine::Update()
 {
     frameStart = SDL_GetTicks();
 
-
     while (SDL_PollEvent(&e) != 0)
     {
         if (e.type == SDL_QUIT)
@@ -87,68 +97,122 @@ int CAT_SDLEngine::Update()
         }
         else if (e.type == SDL_KEYDOWN)
         {
+            if (this->type_controller == CAT_SDLEngine::KEY_MOUSE) {
 
-            
-            if (e.key.keysym.sym == SDLK_d)
-            {
-                input.right = 1;
+                if (e.key.keysym.sym == SDLK_d)
+                {
+                    input.right = 1;
+                }
+
+
+                if (e.key.keysym.sym == SDLK_a)
+                {
+                    input.left = 1;
+                }
+
+
+                if (e.key.keysym.sym == SDLK_w)
+                {
+                    input.front = 1;
+                }
+
+                if (e.key.keysym.sym == SDLK_s)
+                {
+                    input.back = 1;
+                }
+
+                if (e.key.keysym.sym == SDLK_ESCAPE)
+                {
+                    input.escape = 1;
+                }
+
             }
 
-            
-            if (e.key.keysym.sym == SDLK_a)
-            {
-                input.left = 1;
-            }
-
-            
-            if (e.key.keysym.sym == SDLK_w)
-            {
-                input.front = 1;
-            }
-
-            if (e.key.keysym.sym == SDLK_s)
-            {
-                input.back = 1;
-            }
-
-            if (e.key.keysym.sym == SDLK_ESCAPE)
-            {
-                input.escape = 1;
-            }
         }
         else if (e.type == SDL_KEYUP)
         {
+            if (this->type_controller == CAT_SDLEngine::KEY_MOUSE) {
 
-            
-            if (e.key.keysym.sym == SDLK_d)
-            {
-                input.right = 0;
+                if (e.key.keysym.sym == SDLK_d)
+                {
+                    input.right = 0;
+                }
+
+
+                if (e.key.keysym.sym == SDLK_a)
+                {
+                    input.left = 0;
+                }
+
+
+                if (e.key.keysym.sym == SDLK_w)
+                {
+                    input.front = 0;
+                }
+
+
+                if (e.key.keysym.sym == SDLK_s)
+                {
+                    input.back = 0;
+                }
+
+                if (e.key.keysym.sym == SDLK_ESCAPE)
+                {
+                    input.escape = 0;
+                }
+
             }
 
             
-            if (e.key.keysym.sym == SDLK_a)
-            {
-                input.left = 0;
-            }
 
-            
-            if (e.key.keysym.sym == SDLK_w)
-            {
-                input.front = 0;
-            }
-
-            
-            if (e.key.keysym.sym == SDLK_s)
-            {
-                input.back = 0;
-            }
-
-            if (e.key.keysym.sym == SDLK_ESCAPE)
-            {
-                input.escape = 0;
-            }
+        }
+        else if (e.type == SDL_CONTROLLERDEVICEADDED) {
+            AddController(e.cdevice.which);
+            if (m_controller == nullptr) quit = 1;
+        }
+        else if (e.type == SDL_CONTROLLERDEVICEREMOVED) {
+            RemoveController();
         }
     }
+
+    if (this->type_controller == CAT_SDLEngine::PAD_CONTROLLER) {
+        if (SDL_GameControllerGetButton(m_controller, SDL_CONTROLLER_BUTTON_DPAD_UP) > 0) {
+            input.front = 1;
+        }
+        else {
+            input.front = 0;
+        }
+
+        if (SDL_GameControllerGetButton(m_controller, SDL_CONTROLLER_BUTTON_DPAD_LEFT) > 0) {
+            input.left = 1;
+        }
+        else {
+            input.left = 0;
+        }
+
+        if (SDL_GameControllerGetButton(m_controller, SDL_CONTROLLER_BUTTON_DPAD_RIGHT) > 0) {
+            input.right = 1;
+        }
+        else {
+            input.right = 0;
+        }
+
+        if (SDL_GameControllerGetButton(m_controller, SDL_CONTROLLER_BUTTON_DPAD_DOWN) > 0) {
+            input.back = 1;
+        }
+        else {
+            input.back = 0;
+        }
+
+        if (SDL_GameControllerGetButton(m_controller, SDL_CONTROLLER_BUTTON_START) > 0) {
+            input.escape = 1;
+        }
+        else {
+            input.escape = 0;
+        }
+    
+    }
+
 
     SDL_RenderClear(m_renderer);
 
@@ -221,6 +285,7 @@ int CAT_SDLEngine::Finish(){
 	CAT_ImageStorage::destroy();
     delete m_projecter;
 
+    this->RemoveController();
 	SDL_DestroyRenderer(m_renderer);
 	SDL_DestroyWindow(m_window);
 	SDL_Quit();
@@ -233,4 +298,21 @@ int CAT_SDLEngine::Finish(){
 
 int CAT_SDLEngine::Judge(){
     return (count > 5000) || (input.escape > 0) || (quit > 0);
+}
+
+
+void CAT_SDLEngine::AddController(int index) {
+    if (m_controller != nullptr) return;
+    m_controller = SDL_GameControllerOpen(index);
+    debug::debugLog("Open Game Controller!\n");
+
+    if (m_controller != nullptr) return;
+    debug::debugLog("Error : Failed to Open Game Controller!\n");
+}
+
+void CAT_SDLEngine::RemoveController() {
+    if (m_controller == nullptr) return;
+
+    SDL_GameControllerClose(m_controller);
+    m_controller = nullptr;
 }
