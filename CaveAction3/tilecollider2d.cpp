@@ -15,7 +15,7 @@ namespace component
                         CAT_Rigidbody* rigidbody, 
                         unsigned short layer, 
                         double width, 
-                        const char* file_name,
+                        std::vector<std::vector<unsigned short>> tilemap_collider_init,
                         const float magnitude,
                         const int collision)
     :CAT_Collider2D(transform, rigidbody, layer)                    
@@ -23,7 +23,9 @@ namespace component
         this->m_width = width;
 
 
-        std::vector<std::vector<unsigned short>> csv_file = CSV_Load(std::string(file_name));
+        //std::vector<std::vector<unsigned short>> csv_file = CSV_Load(std::string(file_name));
+        std::vector<std::vector<unsigned short>> csv_file = tilemap_collider_init;
+
 
         int h_num = csv_file.size() + 2;
         int w_num = 0;

@@ -7,6 +7,8 @@
 //#include <math.h>
 
 #include "debug_log.h"
+#include "TilemapData1.h"
+#include "TilemapDataCollider1.h"
 
 #define MASS (2.0)
 
@@ -76,12 +78,12 @@ Field::Field(const string init_name,const Vector3d init_position, SDL_Renderer*c
 	this->name = init_name;
 	this->transform.set_position(init_position);
 
-	this->tilemap = new component::CAT_Tilemap(&(this->transform), "./resource/imgs/tilemap1.png", "./resource/tilemaps/tilemap1_init.csv", renderer);
+	this->tilemap = new component::CAT_Tilemap(&(this->transform), "./resource/imgs/tilemap1.png", tilemap_data1(), renderer);
 
 	projecter_ptr->save(this->tilemap, 1);
 
 	this->rigidbody = new component::CAT_Rigidbody(&(this->transform), component::Newton, MASS);
-	this->tileCollider = new component::CAT_TileCollider2D(&(this->transform), this->rigidbody, 0,32,"./resource/tilemaps/tilemap1_collider.csv");
+	this->tileCollider = new component::CAT_TileCollider2D(&(this->transform), this->rigidbody, 0,32,tilemap_data_collider1());
 }
 
 // デストラクタ

@@ -8,7 +8,7 @@
 namespace component
 {
 
-    CAT_Tilemap::CAT_Tilemap(CAT_Transform *const transform, const char *tilemap_path, const char *tilemap_init_path, SDL_Renderer *const renderer)
+    CAT_Tilemap::CAT_Tilemap(CAT_Transform *const transform, const char *tilemap_path, std::vector<std::vector<unsigned short>> tilemap_init, SDL_Renderer *const renderer)
     :CAT_RawImage(transform) {
         debug::debugLog("Create Tilemap!\n");
 
@@ -39,7 +39,8 @@ namespace component
             }
         }
 
-        tile_init = CSV_Load(std::string(tilemap_init_path));
+        //tile_init = CSV_Load(std::string(tilemap_init_path));
+        tile_init = tilemap_init;
 
         Vector3d pos = this->m_transform->get_position();
 
