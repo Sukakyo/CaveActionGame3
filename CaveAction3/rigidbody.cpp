@@ -69,7 +69,7 @@ namespace component {
 		}
 	}
 
-	Type CAT_Rigidbody::get_type() {
+	CAT_Rigidbody::Type CAT_Rigidbody::get_type() {
 		return this->type;
 	}
 

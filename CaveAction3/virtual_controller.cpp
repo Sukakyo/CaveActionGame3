@@ -74,7 +74,7 @@ namespace component {
 	void CAT_VirtualController::gain(const float delta_time) {
 		this->m_hold_time += delta_time;
 		
-		if (m_rigidbody->get_type() == Newton) {
+		if (m_rigidbody->get_type() == CAT_Rigidbody::Newton) {
 
 			this->m_virtual_input = Vector3d(
 				update_element(this->m_real_input[0], this->m_virtual_input[0], delta_time),
@@ -92,7 +92,7 @@ namespace component {
 
 			this->m_rigidbody->addForce(DEFAULT_INPUT_FORCE *  limit(velocity, this->m_virtual_input));
 		}
-		else if(m_rigidbody->get_type() == Aristoteles) {
+		else if(m_rigidbody->get_type() == CAT_Rigidbody::Aristoteles) {
 			
 			this->m_rigidbody->set_velocity(150 * this->m_real_input);
 			debug::debugLog("speed: %f\n", this->m_rigidbody->get_velocity().norm());

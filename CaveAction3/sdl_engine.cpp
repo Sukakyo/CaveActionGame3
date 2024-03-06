@@ -49,13 +49,21 @@ int CAT_SDLEngine::InitEngine()
 
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 
-
+    int num = 0;
 
     for (auto i = 0, joystick_count = SDL_NumJoysticks(); i < joystick_count; i++)
     {
         if (!SDL_IsGameController(i)) continue;
 
+        num++;
         this->AddController(i);
+    }
+
+    if (num > 0) {
+        this->type_controller = PAD_CONTROLLER;
+    }
+    else {
+        this->type_controller = KEY_MOUSE;
     }
 
 
@@ -64,18 +72,20 @@ int CAT_SDLEngine::InitEngine()
 
     m_projecter = new ImageProjecter();
 
+    m_collider_manager = new ColliderManager();
+
     return 0;
 }
 
 int CAT_SDLEngine::InitObject()
 {
-    field = new Field("Field1", Vector3d(160, 80, 0), m_renderer, m_projecter);
+    field = new Field("Field1", Vector3d(160, 80, 0), m_renderer, m_projecter, m_collider_manager);
     field->set_scale(Vector3d(1.0,1.0,1.0));
 
-    gb1 = new GameObject("ObjectA", Vector3d(320, 240, 0), m_renderer, m_projecter);
+    gb1 = new GameObject("ObjectA", Vector3d(320, 240, 0), m_renderer, m_projecter, m_collider_manager);
     gb1->set_scale(Vector3d(1.0, 1.0, 1.0));
 
-    gb2 = new GameObject("ObjectX", Vector3d(400, 240, 0), m_renderer, m_projecter);
+    gb2 = new GameObject("ObjectX", Vector3d(400, 240, 0), m_renderer, m_projecter, m_collider_manager);
     gb2->set_scale(Vector3d(1.0, 1.0, 1.0));
 
     
@@ -168,10 +178,14 @@ int CAT_SDLEngine::Update()
         }
         else if (e.type == SDL_CONTROLLERDEVICEADDED) {
             AddController(e.cdevice.which);
+
+            this->type_controller = PAD_CONTROLLER;
             if (m_controller == nullptr) quit = 1;
         }
         else if (e.type == SDL_CONTROLLERDEVICEREMOVED) {
             RemoveController();
+
+            this->type_controller = KEY_MOUSE;
         }
     }
 
@@ -210,6 +224,10 @@ int CAT_SDLEngine::Update()
         else {
             input.escape = 0;
         }
+
+        if (SDL_GameControllerGetButton(m_controller, SDL_CONTROLLER_BUTTON_A) > 0) {
+            input.type = 1;
+        }
     
     }
 
@@ -219,24 +237,45 @@ int CAT_SDLEngine::Update()
     int vertical = -(input.front - input.back);
     int horizontal = input.right - input.left;
 
-    if (vertical == 1) {
-        gb1->change_anim(0);
+    if (input.type == 0) {
+        if (vertical == 1) {
+            input.direction = Vector2i(0, 1);
+        }
+        else if (vertical == -1) {
+            input.direction = Vector2i(0, -1);
+        }
+        else if (horizontal == 1) {
+            input.direction = Vector2i(1, 0);
+        }
+        else if (horizontal == -1) {
+            input.direction = Vector2i(-1, 0);
+        }
+
+        if (gb1->get_rigidbody()->get_velocity().norm() > 50) {
+            gb1->change_animation(1, &(input.direction));
+        }
+        else {
+            gb1->change_animation(0, &(input.direction));
+        }
     }
-    else if (vertical == -1) {
-        gb1->change_anim(3);
-    }
-    else if (horizontal == 1) {
-        gb1->change_anim(2);
-    }
-    else if (horizontal == -1) {
-        gb1->change_anim(1);
+    else {
+
+        gb1->change_animation(2, &(input.direction));
+
+        if (input.sum_time > 900) {
+            input.sum_time = 0;
+            input.type = 0;
+        }
+        else {
+            input.sum_time += preDeltaTime;
+        }
     }
 
     gb1->input(Vector3d(horizontal, vertical, 0).normalized());
     
     gb1->get_box_collider_2d()->update();
     gb2->get_box_collider_2d()->update();
-    if(gb1->get_box_collider_2d()->judge(gb2->get_box_collider_2d()) > 0){
+    /*if (gb1->get_box_collider_2d()->judge(gb2->get_box_collider_2d()) > 0) {
         
     }
 
@@ -244,11 +283,14 @@ int CAT_SDLEngine::Update()
          
     }
     field->get_tilecollider()->judge(gb1->get_box_collider_2d());
-    field->get_tilecollider()->judge(gb2->get_box_collider_2d());
+    field->get_tilecollider()->judge(gb2->get_box_collider_2d());*/
 
-    field->project();
+    this->m_collider_manager->judge();
+
+
+    /*field->project();
     gb1->project();
-    gb2->project();
+    gb2->project();*/
     this->m_projecter->project();
     
     SDL_RenderPresent(m_renderer);

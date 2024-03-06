@@ -6,15 +6,11 @@
 
 
 ImageProjecter::ImageProjecter() {
-	this->image_table = std::vector<std::vector<component::CAT_RawImage*>>(MAX_LAYER_SIZE);
+	this->image_table = std::vector<std::vector<component::CAT_RawImage*>>(MAX_IMAGE_LAYER_SIZE);
 }
 
 ImageProjecter::~ImageProjecter() {
-	for (int i = 0; i < this->image_table.size(); i++) {
-		for (int j = 0; j < this->image_table[i].size(); j++) {
-			//delete this->image_table[i][j];
-		}
-	}
+
 }
 
 void ImageProjecter::save(component::CAT_RawImage* rawImage, unsigned char layer){

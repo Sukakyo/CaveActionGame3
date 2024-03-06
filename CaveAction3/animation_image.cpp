@@ -34,7 +34,7 @@ namespace component
 			std::vector<double> durations = animLoader.get_durations(id);
 
 
-			State state;
+			ImageState state;
 
 			double sum_time = 0;
 			for (int i = 0; i < durations.size(); i++) {
@@ -59,8 +59,9 @@ namespace component
 
 				state.m_textures.push_back(SDL_CreateTextureFromSurface(m_renderer, state.m_images[i]));
 
-				SDL_QueryTexture(state.m_textures[i], &(this->m_format), NULL, &(this->m_w), &(this->m_h));
-				state.m_image_rects.push_back(SDL_Rect{ 0, 0, m_w, m_h });
+
+				SDL_QueryTexture(state.m_textures[i], &(this->m_format), NULL, &(state.m_w), &(state.m_h));
+				state.m_image_rects.push_back(SDL_Rect{ 0, 0, state.m_w, state.m_h });
 			}
 
 			this->states.push_back(state);
@@ -85,8 +86,8 @@ namespace component
 			}
 		}
 
-		float draw_w = this->m_w * this->m_transform->get_scale()[0];
-		float draw_h = this->m_h * this->m_transform->get_scale()[1];
+		float draw_w = this->states[state_id].m_w * this->m_transform->get_scale()[0];
+		float draw_h = this->states[state_id].m_h * this->m_transform->get_scale()[1];
 
 		
 
@@ -106,10 +107,13 @@ namespace component
 						  SDL_FLIP_NONE);
 	}
 
-
 	int CAT_AnimationImage::change_animation(unsigned short new_id) {
-		this->state_id = new_id;
+		if (new_id != this->state_id) {
+			debug::debugLog("Change Animation!");
+			this->sum_time = 0;
+		}
 
+		CAT_AnimationRoot::change_animation(new_id); /* 親クラスのメンバ関数 */
 		return 0;
 	}
 }

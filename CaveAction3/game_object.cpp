@@ -55,6 +55,31 @@ void GameObject::change_anim(unsigned short new_id) {
 	this->image->change_animation(new_id);
 }
 
+void GameObject::save_animation(unsigned short index, Vector2i* direction, unsigned short animation_id) {
+
+	unsigned short vector_key;
+
+	if (direction != nullptr) {
+		if (*direction == Eigen::Vector2i(0, 1)) {
+			vector_key = 0;
+		}
+		else if (*direction == Eigen::Vector2i(-1, 0)) {
+			vector_key = 1;
+		}
+		else if (*direction == Eigen::Vector2i(1, 0)) {
+			vector_key = 2;
+		}
+		else if (*direction == Eigen::Vector2i(0, -1)) {
+			vector_key = 3;
+		}
+	}
+
+	this->animator->save(index, vector_key, animation_id);
+}
+
+void GameObject::change_animation(unsigned short index, Vector2i* direction) {
+	this->animator->change_animation(index, direction);
+}
 
 void GameObject::addForce(const Vector3d force){
 	this->rigidbody->addForce(force);
@@ -88,7 +113,7 @@ component::CAT_BoxCollider2D* GameObject::get_box_collider_2d(){
 
 
 // コンストラクタ //
-GameObject::GameObject(const string init_name,const Vector3d init_position, SDL_Renderer*const renderer, ImageProjecter* projecter_ptr){
+GameObject::GameObject(const string init_name,const Vector3d init_position, SDL_Renderer*const renderer, ImageProjecter* projecter_ptr, ColliderManager* collider_manager){
 	this->name = init_name;
 	this->transform.set_position(init_position);
 
@@ -96,16 +121,36 @@ GameObject::GameObject(const string init_name,const Vector3d init_position, SDL_
 	player_anim_1(),
 	renderer);
 
+	this->animator = new component::CAT_Animator2D(this->image);
+
+	unsigned short down = 0;
+	unsigned short left = 1;
+	unsigned short right = 2;
+	unsigned short up = 3;
+	this->animator->save(0, down , 0);
+	this->animator->save(0, left , 1);
+	this->animator->save(0, right, 2);
+	this->animator->save(0, up,    3);
+	this->animator->save(1, down,  4);
+	this->animator->save(1, left,  5);
+	this->animator->save(1, right, 6);
+	this->animator->save(1, up,    7);
+	this->animator->save(2, down,  8);
+	this->animator->save(2, left,  9);
+	this->animator->save(2, right,10);
+	this->animator->save(2, up,   11);
+
+
 	projecter_ptr->save(this->image, 2);
 
 	
-	this->rigidbody = new component::CAT_Rigidbody(&(this->transform), component::Newton, MASS * 2);
+	this->rigidbody = new component::CAT_Rigidbody(&(this->transform), component::CAT_Rigidbody::Newton, MASS * 2);
 	this->virtual_controller = new component::CAT_VirtualController(this->rigidbody, M_PI);
 	this->virtual_controller->set_max_speed(150.0);
 
 	this->box_collider = new component::CAT_BoxCollider2D(&(this->transform), this->rigidbody, 0,24,64,Vector2d(0,0));
 
-	
+	collider_manager->save(this->box_collider, 0);
 }
 
 // デストラクタ //

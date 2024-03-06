@@ -74,7 +74,7 @@ component::CAT_TileCollider2D* Field::get_tilecollider(){
 
 
 // コンストラクタ
-Field::Field(const string init_name,const Vector3d init_position, SDL_Renderer*const renderer, ImageProjecter* projecter_ptr){
+Field::Field(const string init_name,const Vector3d init_position, SDL_Renderer*const renderer, ImageProjecter* projecter_ptr, ColliderManager* collider_manager){
 	this->name = init_name;
 	this->transform.set_position(init_position);
 
@@ -82,8 +82,10 @@ Field::Field(const string init_name,const Vector3d init_position, SDL_Renderer*c
 
 	projecter_ptr->save(this->tilemap, 1);
 
-	this->rigidbody = new component::CAT_Rigidbody(&(this->transform), component::Newton, MASS);
+	this->rigidbody = new component::CAT_Rigidbody(&(this->transform), component::CAT_Rigidbody::Newton, MASS);
 	this->tileCollider = new component::CAT_TileCollider2D(&(this->transform), this->rigidbody, 0,32,tilemap_data_collider1());
+
+	collider_manager->save(this->tileCollider, 0);
 }
 
 // デストラクタ
