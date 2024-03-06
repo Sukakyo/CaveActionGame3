@@ -15,6 +15,7 @@
 #include "debug_log.h"
 #include "image_storage.h"
 #include "image_projecter.h"
+#include "collider_manager.h"
 
 #include "game_object.h"
 #include "field.h"
@@ -29,13 +30,25 @@ class CAT_SDLEngine {
 private:
     SDL_Window* m_window;
     SDL_Renderer* m_renderer;
+    SDL_GameController* m_controller = nullptr;
     ImageProjecter* m_projecter;
+    ColliderManager* m_collider_manager;
 
     int count = 0;
 	int quit = 0;
 	SDL_Event e;
 
+    enum TypeController {
+        KEY_MOUSE,
+        PAD_CONTROLLER
+    };
+
+    TypeController type_controller = PAD_CONTROLLER;
+
     struct CAT_Input{
+
+        Eigen::Vector2i direction = Vector2i(0,1);
+        double sum_time = 0;
         
 	    int right = 0;
 	    int left = 0;
@@ -43,6 +56,8 @@ private:
 	    int back = 0;
 	
 	    int escape = 0;
+
+        int type = 0;
     };
 
     CAT_Input input;
@@ -56,6 +71,11 @@ private:
     GameObject* gb1;
 
     GameObject* gb2;
+
+private:
+
+    void AddController(int index);
+    void RemoveController();
 
 
 public:

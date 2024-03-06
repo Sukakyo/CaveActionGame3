@@ -12,6 +12,7 @@
 #include "tilecollider2d.h"
 
 #include "image_projecter.h"
+#include "collider_manager.h"
 
 #define EIGEN_NO_DEBUG 
 #define EIGEN_DONT_VECTORIZE
@@ -56,7 +57,7 @@ class Field{
 		component::CAT_Rigidbody* get_rigidbody();
 		component::CAT_TileCollider2D* get_tilecollider();
 		
-		Field(const std::string init_name,const Vector3d init_position,SDL_Renderer*const renderer, ImageProjecter* projecter_ptr);
+		Field(const std::string init_name,const Vector3d init_position,SDL_Renderer*const renderer, ImageProjecter* projecter_ptr, ColliderManager* collider_manager);
 		~Field();
 };
 

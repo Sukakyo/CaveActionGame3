@@ -22,15 +22,18 @@ using namespace Eigen;
 namespace component
 {
 
-	typedef enum
-	{
-		Newton,
-		Aristoteles
-
-	} Type;
-
+	
 	class CAT_Rigidbody
 	{
+	public:
+		typedef enum
+		{
+			Newton,
+			Aristoteles
+
+		} Type;
+
+
 	private:
 		Type type;
 		Vector3d m_velocity = Vector3d::Zero();			 // 速度 //

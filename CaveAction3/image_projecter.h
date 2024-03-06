@@ -4,7 +4,7 @@
 
 #include "raw_image.h"
 
-#define MAX_LAYER_SIZE (32)
+#define MAX_IMAGE_LAYER_SIZE (64)
 
 
 class ImageProjecter {

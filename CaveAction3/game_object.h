@@ -11,13 +11,15 @@
 #include "image.h"
 #include "boxcollider2d.h"
 #include "animation_image.h"
-
+#include "animator2d.h"
 
 #define EIGEN_NO_DEBUG 
 #define EIGEN_DONT_VECTORIZE
 #define EIGEN_DONT_PARALLELIZE
 #define EIGEN_MPL2_ONLY
 
+
+#include "collider_manager.h"
 
 
 //using namespace std;
@@ -38,6 +40,7 @@ class GameObject{
 		Tag tag;
 
 		component::CAT_AnimationImage* image;
+		component::CAT_Animator2D* animator;
 		component::CAT_Rigidbody* rigidbody;
 		component::CAT_VirtualController* virtual_controller;
 		component::CAT_BoxCollider2D* box_collider;
@@ -50,6 +53,11 @@ class GameObject{
 		void print_data();
 		void set_scale(const Vector3d scale);
 		void project();
+		void change_anim(unsigned short new_id);
+
+		void save_animation(unsigned short index, Vector2i* direction, unsigned short animation_id);
+		void change_animation(unsigned short index, Vector2i* direction);
+
 		void addForce(const Vector3d force);
 		void gain(const float deltaTime);
 		void move(const Vector3d new_position);
@@ -60,7 +68,7 @@ class GameObject{
 		component::CAT_VirtualController* get_virtual_controller();
 		component::CAT_BoxCollider2D* get_box_collider_2d();
 
-		GameObject(const std::string init_name,const Vector3d init_position,SDL_Renderer*const renderer, ImageProjecter* projecter_ptr);
+		GameObject(const std::string init_name,const Vector3d init_position,SDL_Renderer*const renderer, ImageProjecter* projecter_ptr, ColliderManager* collider_manager);
 		~GameObject();
 };
 

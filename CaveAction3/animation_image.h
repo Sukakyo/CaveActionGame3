@@ -8,22 +8,25 @@
 #include <vector>
 
 #include "raw_image.h"
+#include "animation_root.h"
 
 namespace component
 {
 
-	class CAT_AnimationImage : public CAT_RawImage
+	class CAT_AnimationImage : public CAT_RawImage, public CAT_AnimationRoot
 	{
 	private:
-		struct State{
+		struct ImageState{
 			std::vector<SDL_Surface*> m_images;
 			std::vector<SDL_Texture*> m_textures;
 			std::vector<SDL_Rect> m_image_rects;
-			//std::vector<int> m_w;//
-			//std::vector<int> m_h;//
+			int m_w;
+			int m_h;
 
 			std::vector<double> duration_times;
 		};
+
+
 
 		//SDL_Surface *m_image; // 画像 //
 		int m_w;			  // 幅 //
@@ -36,11 +39,14 @@ namespace component
 		
 		double sum_time = 0;
 
-		State state;
+		std::vector<ImageState> states;
+		
 
 	public:
-		CAT_AnimationImage(CAT_Transform *const transform, std::vector<const char *>path, std::vector<double> durations, SDL_Renderer *const renderer);
+		CAT_AnimationImage(CAT_Transform *const transform, const char* xml_file, SDL_Renderer *const renderer);
 		void gain(double delta_time);
 		void project() override;
+		int change_animation(unsigned short new_id) override;
+		
 	};
 }

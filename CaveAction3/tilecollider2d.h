@@ -28,7 +28,7 @@ namespace component
                         CAT_Rigidbody* rigidbody, 
                         unsigned short layer, 
                         double width, 
-                        const char* file_name,
+                        std::vector<std::vector<unsigned short>> tilemap_collider_init,
                         const float magnitude = DEFAULT_MAGNITUDE,
                         const int collision = DEFAULT_COLLISION);
         ~CAT_TileCollider2D();

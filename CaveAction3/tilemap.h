@@ -30,7 +30,7 @@ namespace component
 		
 
 	public:
-		CAT_Tilemap(CAT_Transform *const transform, const char *path, const char* tilemap_init_path, SDL_Renderer *const renderer);
+		CAT_Tilemap(CAT_Transform *const transform, const char *path, std::vector<std::vector<unsigned short>> tilemap_init, SDL_Renderer *const renderer);
 		void project() override;
     };
 }
