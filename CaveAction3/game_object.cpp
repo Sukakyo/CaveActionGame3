@@ -9,7 +9,6 @@
 
 #include "PlayerAnim1.h"
 
-
 #define MASS (2.0)
 
 using namespace std;
@@ -86,10 +85,17 @@ void GameObject::addForce(const Vector3d force){
 }
 
 void GameObject::gain(const float delta_time){
+	this->player_controller->update();
 	this->virtual_controller->gain(delta_time);
 	this->rigidbody->gain(delta_time);
 	this->image->gain(delta_time);
+
+	this->player_controller->gain(delta_time);
 }
+
+void GameObject::set_input(CAT_Input* const new_input) {
+	this->player_controller->set_input(new_input);
+};
 
 void GameObject::set_scale(const Vector3d scale){
 	this->transform.set_scale(scale);
@@ -151,6 +157,9 @@ GameObject::GameObject(const string init_name,const Vector3d init_position, SDL_
 	this->box_collider = new component::CAT_BoxCollider2D(&(this->transform), this->rigidbody, 0,24,64,Vector2d(0,0));
 
 	collider_manager->save(this->box_collider, 0);
+
+	this->player_controller = new component::PlayerController(this->rigidbody, this->virtual_controller, this->animator);
+
 }
 
 // デストラクタ //
@@ -160,4 +169,7 @@ GameObject::~GameObject(){
 	delete this->rigidbody;
 	delete this->virtual_controller;
 	delete this->box_collider;
+	delete this->animator;
+
+	delete this->player_controller;
 }

@@ -27,6 +27,12 @@ namespace object {
 		GameObject(GameObject::ObjectInitializer objectInit);
 		virtual ~GameObject();
 
+
+		virtual void Update();
+		virtual void Gain(double delta_time);
+
+
+
 		Vector3d GetPosition() { return transform->get_position(); }
 		Vector3d GetRotation() { return transform->get_rotation(); }
 

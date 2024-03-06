@@ -13,6 +13,8 @@
 #include "animation_image.h"
 #include "animator2d.h"
 
+#include "player_controller.h"
+
 #define EIGEN_NO_DEBUG 
 #define EIGEN_DONT_VECTORIZE
 #define EIGEN_DONT_PARALLELIZE
@@ -20,6 +22,9 @@
 
 
 #include "collider_manager.h"
+
+#include "shared_struct.h"
+
 
 
 //using namespace std;
@@ -44,6 +49,7 @@ class GameObject{
 		component::CAT_Rigidbody* rigidbody;
 		component::CAT_VirtualController* virtual_controller;
 		component::CAT_BoxCollider2D* box_collider;
+		component::PlayerController* player_controller;
 
 
 
@@ -61,7 +67,8 @@ class GameObject{
 		void addForce(const Vector3d force);
 		void gain(const float deltaTime);
 		void move(const Vector3d new_position);
-		void input(const Vector3d input);
+		void input(Vector3d input);
+		void set_input(CAT_Input*const);
 
 		component::CAT_AnimationImage* get_image();
 		component::CAT_Rigidbody* get_rigidbody();

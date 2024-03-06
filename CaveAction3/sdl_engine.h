@@ -17,12 +17,16 @@
 #include "image_projecter.h"
 #include "collider_manager.h"
 
-#include "game_object.h"
+//#include "game_object.h"
 #include "field.h"
 
 #include "image.h"
 #include "rigidbody.h"
 #include "virtual_controller.h"
+
+#include "shared_struct.h"
+
+#include "AnimationEntity2D.h"
 
 using namespace component;
 
@@ -45,22 +49,9 @@ private:
 
     TypeController type_controller = PAD_CONTROLLER;
 
-    struct CAT_Input{
 
-        Eigen::Vector2i direction = Vector2i(0,1);
-        double sum_time = 0;
-        
-	    int right = 0;
-	    int left = 0;
-	    int front = 0;
-	    int back = 0;
-	
-	    int escape = 0;
 
-        int type = 0;
-    };
-
-    CAT_Input input;
+    CAT_Input input = {};
 
     Uint32 frameStart, frameTime;
     Uint32 preDeltaTime = 0;
@@ -68,9 +59,9 @@ private:
 
     Field* field;
 
-    GameObject* gb1;
+    object::AnimationEntity2D* gb1;
 
-    GameObject* gb2;
+    object::AnimationEntity2D* gb2;
 
 private:
 

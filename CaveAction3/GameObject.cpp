@@ -13,4 +13,12 @@ namespace object {
 	GameObject::~GameObject() {
 		delete this->transform;
 	}
+
+	void GameObject::Update() {
+
+	}
+
+	void GameObject::Gain(double delta_time) {
+
+	}
 }

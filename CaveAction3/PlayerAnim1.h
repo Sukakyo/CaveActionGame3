@@ -104,7 +104,7 @@ const char* player_anim_1() {
     <animation>
         <frame>
             <filename>./resource/imgs/scythe/front/dotchara1_ver3_front_scythe1.png</filename>
-            <duration>500</duration>
+            <duration>250</duration>
         </frame>
         <frame>
             <filename>./resource/imgs/scythe/front/dotchara1_ver3_front_scythe4.png</filename>
@@ -112,13 +112,13 @@ const char* player_anim_1() {
         </frame>
         <frame>
             <filename>./resource/imgs/scythe/front/dotchara1_ver3_front_scythe5.png</filename>
-            <duration>450</duration>
+            <duration>250</duration>
         </frame>
     </animation>
     <animation>
         <frame>
             <filename>./resource/imgs/scythe/left/dotchara1_ver3_left_scythe1.png</filename>
-            <duration>500</duration>
+            <duration>250</duration>
         </frame>
         <frame>
             <filename>./resource/imgs/scythe/left/dotchara1_ver3_left_scythe4.png</filename>
@@ -126,13 +126,13 @@ const char* player_anim_1() {
         </frame>
         <frame>
             <filename>./resource/imgs/scythe/left/dotchara1_ver3_left_scythe5.png</filename>
-            <duration>450</duration>
+            <duration>250</duration>
         </frame>
     </animation>
     <animation>
         <frame>
             <filename>./resource/imgs/scythe/right/dotchara1_ver3_right_scythe1.png</filename>
-            <duration>500</duration>
+            <duration>250</duration>
         </frame>
         <frame>
             <filename>./resource/imgs/scythe/right/dotchara1_ver3_right_scythe4.png</filename>
@@ -140,13 +140,13 @@ const char* player_anim_1() {
         </frame>
         <frame>
             <filename>./resource/imgs/scythe/right/dotchara1_ver3_right_scythe5.png</filename>
-            <duration>450</duration>
+            <duration>250</duration>
         </frame>
     </animation>
     <animation>
         <frame>
             <filename>./resource/imgs/scythe/back/dotchara1_ver3_back_scythe1.png</filename>
-            <duration>500</duration>
+            <duration>250</duration>
         </frame>
         <frame>
             <filename>./resource/imgs/scythe/back/dotchara1_ver3_back_scythe4.png</filename>
@@ -154,7 +154,7 @@ const char* player_anim_1() {
         </frame>
         <frame>
             <filename>./resource/imgs/scythe/back/dotchara1_ver3_back_scythe5.png</filename>
-            <duration>450</duration>
+            <duration>250</duration>
         </frame>
     </animation>
 </data>

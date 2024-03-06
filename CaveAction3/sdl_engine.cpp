@@ -8,6 +8,8 @@
 #include <pugixml.hpp>
 #include <iostream>
 
+#include "PlayerAnim1.h"
+#include "PlayerAnimTuple1.h"
 
 
 int CAT_SDLEngine::InitEngine()
@@ -82,13 +84,32 @@ int CAT_SDLEngine::InitObject()
     field = new Field("Field1", Vector3d(160, 80, 0), m_renderer, m_projecter, m_collider_manager);
     field->set_scale(Vector3d(1.0,1.0,1.0));
 
-    gb1 = new GameObject("ObjectA", Vector3d(320, 240, 0), m_renderer, m_projecter, m_collider_manager);
-    gb1->set_scale(Vector3d(1.0, 1.0, 1.0));
+    //gb1 = new GameObject("ObjectA", Vector3d(320, 240, 0), m_renderer, m_projecter, m_collider_manager);
+    //gb1->set_scale(Vector3d(1.0, 1.0, 1.0));
+    //gb1->set_input(&(this->input));
 
-    gb2 = new GameObject("ObjectX", Vector3d(400, 240, 0), m_renderer, m_projecter, m_collider_manager);
-    gb2->set_scale(Vector3d(1.0, 1.0, 1.0));
+    object::AnimationEntity2D::ObjectInitializer gb2Init = {};
+    gb2Init.position = Eigen::Vector3d(320, 240, 0);
+    gb2Init.rotation = Eigen::Vector3d(0, 0, 0);
+    gb2Init.scale = Eigen::Vector3d(1, 1, 1);
+    gb2Init.animation_data = player_anim_1();
+    gb2Init.renderer = m_renderer;
+    gb2Init.image_layer = 2;
+    gb2Init.projecter = m_projecter;
+    gb2Init.animation_sets = player_anim_tuple1();
+    gb2Init.physics_type = component::CAT_Rigidbody::Newton;
+    gb2Init.mass = 4.0;
+    gb2Init.input_speed = M_PI;
+    gb2Init.max_speed = 150;
+    gb2Init.collider_layer = 0;
+    gb2Init.collider_w = 24;
+    gb2Init.collider_h = 64;
+    gb2Init.collider_offset = Vector2d(0, 0);
+    gb2Init.collider_manager = m_collider_manager;
+    gb2 = new object::AnimationEntity2D(gb2Init);
 
-    
+    gb2Init.position = {400,240,0};
+    gb1 = new object::AnimationEntity2D(gb2Init);
 
 
     return 0;
@@ -226,76 +247,17 @@ int CAT_SDLEngine::Update()
         }
 
         if (SDL_GameControllerGetButton(m_controller, SDL_CONTROLLER_BUTTON_A) > 0) {
-            input.type = 1;
+            input.a = 1;
+        }
+        else {
+            input.a = 0;
         }
     
     }
 
-
-    SDL_RenderClear(m_renderer);
-
-    int vertical = -(input.front - input.back);
-    int horizontal = input.right - input.left;
-
-    if (input.type == 0) {
-        if (vertical == 1) {
-            input.direction = Vector2i(0, 1);
-        }
-        else if (vertical == -1) {
-            input.direction = Vector2i(0, -1);
-        }
-        else if (horizontal == 1) {
-            input.direction = Vector2i(1, 0);
-        }
-        else if (horizontal == -1) {
-            input.direction = Vector2i(-1, 0);
-        }
-
-        if (gb1->get_rigidbody()->get_velocity().norm() > 50) {
-            gb1->change_animation(1, &(input.direction));
-        }
-        else {
-            gb1->change_animation(0, &(input.direction));
-        }
-    }
-    else {
-
-        gb1->change_animation(2, &(input.direction));
-
-        if (input.sum_time > 900) {
-            input.sum_time = 0;
-            input.type = 0;
-        }
-        else {
-            input.sum_time += preDeltaTime;
-        }
-    }
-
-    gb1->input(Vector3d(horizontal, vertical, 0).normalized());
     
-    gb1->get_box_collider_2d()->update();
-    gb2->get_box_collider_2d()->update();
-    /*if (gb1->get_box_collider_2d()->judge(gb2->get_box_collider_2d()) > 0) {
-        
-    }
-
-    if(gb2->get_box_collider_2d()->judge(gb1->get_box_collider_2d()) > 0){
-         
-    }
-    field->get_tilecollider()->judge(gb1->get_box_collider_2d());
-    field->get_tilecollider()->judge(gb2->get_box_collider_2d());*/
-
+    
     this->m_collider_manager->judge();
-
-
-    /*field->project();
-    gb1->project();
-    gb2->project();*/
-    this->m_projecter->project();
-    
-    SDL_RenderPresent(m_renderer);
-
-    count++;
 
     frameTime = SDL_GetTicks() - frameStart;
     if (frameTime < 15)
@@ -306,10 +268,25 @@ int CAT_SDLEngine::Update()
 
     preDeltaTime = frameTime;
 
-    gb1->gain(frameTime);
-    gb2->gain(frameTime);
+    gb1->Gain(frameTime);
+    gb2->Gain(frameTime);
 
     debug::debugLog("%d\n", frameTime);
+
+    this->Draw();
+
+    count++;
+
+    return 0;
+}
+
+int CAT_SDLEngine::Draw() {
+
+    SDL_RenderClear(m_renderer);
+
+    this->m_projecter->project();
+
+    SDL_RenderPresent(m_renderer);
 
     return 0;
 }
@@ -326,6 +303,7 @@ int CAT_SDLEngine::Finish(){
 
 	CAT_ImageStorage::destroy();
     delete m_projecter;
+    delete m_collider_manager;
 
     this->RemoveController();
 	SDL_DestroyRenderer(m_renderer);

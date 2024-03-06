@@ -9,8 +9,10 @@
 #include "virtual_controller.h"
 
 #include <vector>
+#include <tuple>
 
 #include "image_projecter.h"
+#include "collider_manager.h"
 
 namespace object {
 	class AnimationEntity2D : public GameObject {
@@ -29,6 +31,7 @@ namespace object {
 			ImageProjecter* projecter;
 
 			std::vector<std::tuple<unsigned short, unsigned short, unsigned short>> animation_sets;
+
 			component::CAT_Rigidbody::Type physics_type;
 			float mass;
 
@@ -41,12 +44,15 @@ namespace object {
 			float collider_w;
 			float collider_h;
 			Vector2d collider_offset;
-
+			ColliderManager* collider_manager;
 
 		};
 
 		AnimationEntity2D(AnimationEntity2D::ObjectInitializer objectInit);
 		virtual ~AnimationEntity2D();
+
+		virtual void Update();
+		virtual void Gain(double delta_time);
 
 	};
 
