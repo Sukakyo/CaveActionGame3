@@ -11,6 +11,8 @@
 #include "PlayerAnim1.h"
 #include "PlayerAnimTuple1.h"
 
+#include "TilemapData1.h"
+#include "TilemapDataCollider1.h"
 
 int CAT_SDLEngine::InitEngine()
 {
@@ -81,8 +83,25 @@ int CAT_SDLEngine::InitEngine()
 
 int CAT_SDLEngine::InitObject()
 {
-    field = new Field("Field1", Vector3d(160, 80, 0), m_renderer, m_projecter, m_collider_manager);
-    field->set_scale(Vector3d(1.0,1.0,1.0));
+    object::TilemapObject::ObjectInitializer tilemapInit = {};
+    tilemapInit.position = { 160,80,0 };
+    tilemapInit.rotation = { 0,0,0 };
+    tilemapInit.scale = { 1,1,1 };
+    tilemapInit.tilemap_file_path = "./resource/imgs/tilemap1.png";
+    tilemapInit.tilemap_init = tilemap_data1();
+    tilemapInit.renderer = this->m_renderer;
+    tilemapInit.image_layer = 0;
+    tilemapInit.projecter = this->m_projecter;
+    tilemapInit.collider_layer = 0;
+    tilemapInit.collider_width = 32;
+    tilemapInit.tilemap_collider_init = tilemap_data_collider1();
+    tilemapInit.collision_magnitude = -1;
+    tilemapInit.collision = -1;
+    tilemapInit.collider_manager = this->m_collider_manager;
+
+    field = new object::TilemapObject(tilemapInit);
+
+
 
     //gb1 = new GameObject("ObjectA", Vector3d(320, 240, 0), m_renderer, m_projecter, m_collider_manager);
     //gb1->set_scale(Vector3d(1.0, 1.0, 1.0));
@@ -108,8 +127,26 @@ int CAT_SDLEngine::InitObject()
     gb2Init.collider_manager = m_collider_manager;
     gb2 = new object::AnimationEntity2D(gb2Init);
 
-    gb2Init.position = {400,240,0};
-    gb1 = new object::AnimationEntity2D(gb2Init);
+    object::Player2D::ObjectInitializer gb1Init = {};
+    gb1Init.position = {400,240,0};
+    gb1Init.rotation = Eigen::Vector3d(0, 0, 0);
+    gb1Init.scale = Eigen::Vector3d(1, 1, 1);
+    gb1Init.animation_data = player_anim_1();
+    gb1Init.renderer = m_renderer;
+    gb1Init.image_layer = 2;
+    gb1Init.projecter = m_projecter;
+    gb1Init.animation_sets = player_anim_tuple1();
+    gb1Init.physics_type = component::CAT_Rigidbody::Newton;
+    gb1Init.mass = 4.0;
+    gb1Init.input_speed = M_PI;
+    gb1Init.max_speed = 150;
+    gb1Init.collider_layer = 0;
+    gb1Init.collider_w = 24;
+    gb1Init.collider_h = 64;
+    gb1Init.collider_offset = Vector2d(0, 0);
+    gb1Init.collider_manager = m_collider_manager;
+    gb1Init.player_input = &(this->input);
+    gb1 = new object::Player2D(gb1Init);
 
 
     return 0;
@@ -152,6 +189,11 @@ int CAT_SDLEngine::Update()
                     input.back = 1;
                 }
 
+                if (e.key.keysym.sym == SDLK_j) {
+                    input.a = 1;
+                }
+
+
                 if (e.key.keysym.sym == SDLK_ESCAPE)
                 {
                     input.escape = 1;
@@ -185,6 +227,10 @@ int CAT_SDLEngine::Update()
                 if (e.key.keysym.sym == SDLK_s)
                 {
                     input.back = 0;
+                }
+
+                if (e.key.keysym.sym == SDLK_j) {
+                    input.a = 0;
                 }
 
                 if (e.key.keysym.sym == SDLK_ESCAPE)
@@ -268,6 +314,11 @@ int CAT_SDLEngine::Update()
 
     preDeltaTime = frameTime;
 
+    gb1->Update();
+    gb2->Update();
+
+
+
     gb1->Gain(frameTime);
     gb2->Gain(frameTime);
 
@@ -326,6 +377,8 @@ void CAT_SDLEngine::AddController(int index) {
     m_controller = SDL_GameControllerOpen(index);
     debug::debugLog("Open Game Controller!\n");
 
+    InitInput();
+
     if (m_controller != nullptr) return;
     debug::debugLog("Error : Failed to Open Game Controller!\n");
 }
@@ -335,4 +388,17 @@ void CAT_SDLEngine::RemoveController() {
 
     SDL_GameControllerClose(m_controller);
     m_controller = nullptr;
+
+    InitInput();
+}
+
+void CAT_SDLEngine::InitInput() {
+    input.front = 0;
+    input.left = 0;
+    input.right = 0;
+    input.back = 0;
+
+    input.a = 0;
+
+    input.escape = 0;
 }

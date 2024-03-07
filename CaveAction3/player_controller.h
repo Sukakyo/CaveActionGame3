@@ -15,7 +15,7 @@
 
 namespace component {
 
-	class PlayerController {
+	class CAT_PlayerController {
 	private:
 		CAT_Input* m_input = nullptr;
 		CAT_Rigidbody* m_rigidbody;
@@ -32,14 +32,14 @@ namespace component {
 
 		PlayerState state = PlayerState::Move;
 
-		double sum_time = 0;
+		double state_continuation_time = 0;
 
 	private:
 		void change_state(PlayerState new_state);
 		
 
 	public:
-		PlayerController(CAT_Rigidbody*const new_rigidbody,CAT_VirtualController*const new_v_controller,CAT_Animator2D*const new_animator2D);
+		CAT_PlayerController(CAT_Rigidbody*const new_rigidbody,CAT_VirtualController*const new_v_controller,CAT_Animator2D*const new_animator2D);
 		void set_input(CAT_Input* const new_input);
 		void update();
 		void gain(double delta_time);

@@ -27,6 +27,9 @@
 #include "shared_struct.h"
 
 #include "AnimationEntity2D.h"
+#include "Player2D.h"
+
+#include "TilemapObject.h"
 
 using namespace component;
 
@@ -57,9 +60,9 @@ private:
     Uint32 preDeltaTime = 0;
 
 
-    Field* field;
+    object::TilemapObject* field;
 
-    object::AnimationEntity2D* gb1;
+    object::Player2D* gb1;
 
     object::AnimationEntity2D* gb2;
 
@@ -67,6 +70,7 @@ private:
 
     void AddController(int index);
     void RemoveController();
+    void InitInput();
 
 
 public:

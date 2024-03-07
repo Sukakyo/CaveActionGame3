@@ -41,14 +41,15 @@ namespace object {
 	}
 
 	void AnimationEntity2D::Update() {
-
+		//this->virtual_contoroller->input(Eigen::Vector3d(1, 0, 0));
 	}
 
 	void AnimationEntity2D::Gain(double delta_time) {
-		this->virtual_contoroller->input(Eigen::Vector3d(1, 0, 0));
+		
 
 		this->animation_image->gain(delta_time);
-		this->rigidbody->gain(delta_time);
+
 		this->virtual_contoroller->gain(delta_time);
+		this->rigidbody->gain(delta_time);
 	}
 }

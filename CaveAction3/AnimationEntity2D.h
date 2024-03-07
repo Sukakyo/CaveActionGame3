@@ -51,8 +51,8 @@ namespace object {
 		AnimationEntity2D(AnimationEntity2D::ObjectInitializer objectInit);
 		virtual ~AnimationEntity2D();
 
-		virtual void Update();
-		virtual void Gain(double delta_time);
+		virtual void Update() override;
+		virtual void Gain(double delta_time) override;
 
 	};
 
